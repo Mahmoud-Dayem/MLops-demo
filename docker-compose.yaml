@@ -1,0 +1,25 @@
+ services:
+  backend:
+    image: housepricedayem:latest
+    container_name: housepricedayem_backend
+    ports:
+      - "8000:8000"  # FastAPI exposed
+    restart: unless-stopped   
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  frontend:
+     
+    container_name: housepricedayem_frontend
+    build:
+      context: ./streamlit_app
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"  # Streamlit default port
+    depends_on:
+      - backend
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_HEADLESS=true
+      - API_URL=http://backend:8000
+      - APP_VERSION=2.0.0
