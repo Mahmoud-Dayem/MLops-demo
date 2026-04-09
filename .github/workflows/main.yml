@@ -12,30 +12,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create file (simulate build)
-        run: |
-          mkdir dist
-          echo "Hello Mohamed 🚀" > dist/file.txt
+1-use ubuntu-latest
+2-copy code
+install dependecies
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: my-artifact
-          path: dist/
+ ```bash
+python src/data/run_processing.py   --input data/raw/house_data.csv   --output data/processed/cleaned_house_data.csv
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build   # 👈 wait for build job
 
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: my-artifact
-          path: dist/
+```bash
+python src/features/engineer.py   --input data/processed/cleaned_house_data.csv   --output data/processed/featured_house_data.csv   --preprocessor models/trained/preprocessor.pkl
+```
 
-      - name: Show files
-        run: |
-          echo "Files inside dist:"
-          ls dist
-          cat dist/file.txt
+
+```bash
+python src/models/train_model.py   --config configs/model_config.yaml   --data data/processed/featured_house_data.csv   --models-dir models   --mlflow-tracking-uri http://localhost:5000
+
+
+
+ 
